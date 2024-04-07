@@ -1,4 +1,6 @@
-﻿
+﻿using System.Diagnostics.CodeAnalysis;
+using static System.Console;
+
 List<Book> books = new()
 {
     new()
@@ -8,7 +10,7 @@ List<Book> books = new()
         AuthorId = 1,
         Description= "academic descriptio of networking",
         Category = "Networking",
-        Price = 55.30m,
+        Price = 155.99m,
     },
     new()
     {
@@ -21,12 +23,21 @@ List<Book> books = new()
     },
     new()
     {
-        Id = 2,
+        Id = 3,
         Title = "CCNA",
         AuthorId = 2,
         Description= "practical cisco networks",
         Category = "Networking",
         Price = 100.00m,
+    },
+    new()
+    {
+        Id = 4,
+        Title = "EthicalHacking",
+        AuthorId = 2,
+        Description= "hacking networks",
+        Category = "Security",
+        Price = 120.00m,
     }
 };
 List<Author> authors = new()
@@ -50,11 +61,15 @@ List<Author> authors = new()
 List<int> numbers1 = new() { 15, 62, 99, 33, 54 };
 List<int> numbers2 = new() { 15, 62, 59, 23, 44 };
 
-//------
+//----------------
 
+var list = books.Where(b => b.Price == 
+            books.Where(b2=> b2.Category == b.Category)
+                 .Max(b2 => b2.Price)).ToList();
 
-
-//------
+//----------------
+WriteLine();
+;
 public class Book
 {
     public int Id { get; set; }
@@ -69,4 +84,17 @@ public class Author
 {
     public int Id { get; set; }
     public string Name { get; set; } = string.Empty;
+}
+
+public class BookComparer : EqualityComparer<Book>
+{
+    public override bool Equals(Book? x, Book? y)
+    {
+        return x.Id == y.Id;
+    }
+
+    public override int GetHashCode([DisallowNull] Book obj)
+    {
+        return obj.Id.GetHashCode();
+    }
 }
