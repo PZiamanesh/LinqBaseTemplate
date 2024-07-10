@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using static System.Console;
 
 List<Book> books = new()
@@ -40,6 +40,29 @@ List<Book> books = new()
         Price = 120.00m,
     }
 };
+
+List<BookCover> bookCovers = new()
+{
+    new()
+    {
+        Id = 1,
+        BookId = 1,
+        PosterTitle = "RedTcpIpCover"
+    },
+    new()
+    {
+        Id = 2,
+        BookId = 1,
+        PosterTitle = "BlueTcpIpCover"
+    },
+    new()
+    {
+        Id = 3,
+        BookId = 3,
+        PosterTitle = "GreenCiscoPress"
+    }
+};
+
 List<Author> authors = new()
 {
     new()
@@ -58,14 +81,38 @@ List<Author> authors = new()
         Name = "rosen"
     }
 };
+
 List<int> numbers1 = new() { 15, 62, 99, 33, 54 };
 List<int> numbers2 = new() { 15, 62, 59, 23, 44 };
 
 //----------------
 
-var list = books.Where(b => b.Price == 
-            books.Where(b2=> b2.Category == b.Category)
-                 .Max(b2 => b2.Price)).ToList();
+var aaa = (from book in books
+           group book by book.Category into bookGroup
+           select new
+           {
+               Catagory = bookGroup.Key,
+               TotalPrice = bookGroup.Sum(b => b.Price)
+           }).ToList();
+
+var bbb = (from author in authors
+           join book in books on author.Id equals book.AuthorId into booksPerObject
+           from bookPerAuthor in booksPerObject.DefaultIfEmpty()
+           select new
+           {
+               Author = author.Name,
+               Book = bookPerAuthor?.Title
+           }).ToList();
+
+var ccc = (from book in books
+           join author in authors on book.AuthorId equals author.Id
+           join bookcover in bookCovers on book.Id equals bookcover.BookId into coversPerObject
+           select new
+           {
+               Author = author.Name,
+               Book = book.Title,
+               BookCovers = coversPerObject
+           }).ToList();
 
 //----------------
 WriteLine();
@@ -86,15 +133,9 @@ public class Author
     public string Name { get; set; } = string.Empty;
 }
 
-public class BookComparer : EqualityComparer<Book>
+public class BookCover
 {
-    public override bool Equals(Book? x, Book? y)
-    {
-        return x.Id == y.Id;
-    }
-
-    public override int GetHashCode([DisallowNull] Book obj)
-    {
-        return obj.Id.GetHashCode();
-    }
+    public int Id { get; set; }
+    public int BookId { get; set; }
+    public string PosterTitle { get; set; }
 }
