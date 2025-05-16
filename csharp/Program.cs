@@ -1,10 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
 using static System.Console;
 
-internal class Program
-{
-    private static void Main(string[] args)
-    {
-        List<Book> books = new()
+List<Book> books = new()
 {
     new()
     {
@@ -44,7 +41,7 @@ internal class Program
     }
 };
 
-        List<BookCover> bookCovers = new()
+List<BookCover> bookCovers = new()
 {
     new()
     {
@@ -66,7 +63,7 @@ internal class Program
     }
 };
 
-        List<Author> authors = new()
+List<Author> authors = new()
 {
     new()
     {
@@ -85,55 +82,52 @@ internal class Program
     }
 };
 
-        //========================================================================
+//========================================================================
 
-        List<int> numbers1 = new() { 5, 5, 5, 15, 62 };
-        List<int> numbers2 = new() { 15, 62, 59, 23, 44 };
+List<int> numbers1 = new() { 5, 5, 5, 15, 62 };
+List<int> numbers2 = new() { 15, 62, 59, 23, 44 };
 
-        var num = numbers1.Except(numbers2).ToList();
+var num = numbers1.Except(numbers2).ToList();
 
 
-        //========================================================================
+//========================================================================
 
-        var aaa = (from book in books
-                   group book by book.Category
-                        into booksGroup
-                   select new
-                   {
-                       Catagory = booksGroup.Key,
-                       TotalPrice = booksGroup.Sum(b => b.Price)
-                   }).ToList();
+var aaa = (from book in books
+           group book by book.Category
+                into booksGroup
+           select new
+           {
+               Catagory = booksGroup.Key,
+               TotalPrice = booksGroup.Sum(b => b.Price)
+           }).ToList();
 
-        var bbb = (from author in authors
-                   join book in books
-                        on author.Id equals book.AuthorId
-                        into booksGroup
-                   from book in booksGroup.DefaultIfEmpty()
-                   select new
-                   {
-                       Author = author.Name,
-                       Book = book?.Title
-                   }).ToList();
+var bbb = (from author in authors
+           join book in books
+                on author.Id equals book.AuthorId
+                into booksGroup
+           from book in booksGroup.DefaultIfEmpty()
+           select new
+           {
+               Author = author.Name,
+               Book = book?.Title
+           }).ToList();
 
-        var ccc = (from book in books
-                   join author in authors
-                        on book.AuthorId equals author.Id
-                   join bookcover in bookCovers
-                        on book.Id equals bookcover.BookId
-                        into bookCoversGroup
-                   select new
-                   {
-                       Author = author.Name,
-                       Book = book.Title,
-                       BookCovers = bookCoversGroup
-                   }).ToList();
+var ccc = (from book in books
+           join author in authors
+                on book.AuthorId equals author.Id
+           join bookcover in bookCovers
+                on book.Id equals bookcover.BookId
+                into bookCoversGroup
+           select new
+           {
+               Author = author.Name,
+               Book = book.Title,
+               BookCovers = bookCoversGroup
+           }).ToList();
 
-        //========================================================================
-        WriteLine();
-        ;
-    }
-}
-
+//========================================================================
+WriteLine();
+;
 public class Book
 {
     public int Id { get; set; }
